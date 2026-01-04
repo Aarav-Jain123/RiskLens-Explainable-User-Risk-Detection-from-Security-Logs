@@ -1,0 +1,10 @@
+pandas
+numpy
+scikit-learn
+django
+django-cors-headers
+django-autoslug
+djangorestframework
+python-dotenv
+django-crispy-forms
+crispy-bootstrap5
