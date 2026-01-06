@@ -1,4 +1,4 @@
-name: Build and Deploy Python app to Azure Web App - risklensbackend
+name: Build and deploy Python app to Azure Web App - risklensbackend
 
 on:
   push:
@@ -20,7 +20,6 @@ jobs:
         run: |
           cd backend
           zip -r ../backend.zip .
-
       - name: Upload zipped artifact
         uses: actions/upload-artifact@v4
         with:
@@ -40,32 +39,26 @@ jobs:
       - name: Unzip artifact
         run: |
           unzip backend.zip -d backend
-
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.14'  
+          python-version: '3.14'
 
       - name: Install dependencies
         working-directory: backend
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-
       - name: Collect static files
         working-directory: backend
         env:
-          DJANGO_SETTINGS_MODULE: djangoProject.deployment
+          DJANGO_SETTINGS_MODULE: djangoProject.settings
         run: |
           python manage.py collectstatic --noinput
-
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v3
         with:
           app-name: risklensbackend
-          slot-name: 'Production'
+          slot-name: Production
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_FB65039BFD8B4486AFBE39FD2174760C }}
           package: backend
-
-
-
