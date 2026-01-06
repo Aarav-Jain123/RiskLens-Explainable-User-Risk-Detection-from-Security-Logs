@@ -35,6 +35,9 @@ export function UploadPage({ onUploadComplete }: UploadPageProps) {
     setError(null);
     setUploading(true);
 
+    const inDevMode = import.meta.env.MODE === 'development';
+    const apiURL = inDevMode ? import.meta.env.VITE_API_BASE_URL_LOCAL : import.meta.env.VITE_API_BASE_URL_PROD;
+
     try {
       const formData = new FormData();
       formData.append('csv_file', file);
