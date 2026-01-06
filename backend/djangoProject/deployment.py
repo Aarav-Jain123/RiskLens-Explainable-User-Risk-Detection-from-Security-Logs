@@ -4,7 +4,10 @@ from .settings import BASE_DIR
 
 ALLOWED_HOSTS = [os.environ['WEBSITE_HOSTNAME'], 'localhost']
 CSRF_TRUSTED_ORIGINS = [f'https://{os.environ["WEBSITE_HOSTNAME"]}']
-
+CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOWED_ORIGINS = [
+    os.environ['TRUST_URL_PROD'],
+]
 DEBUG = False
 
 MIDDLEWARE = [
@@ -53,4 +56,5 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 
 SECRET_KEY = os.environ['MY_SECRET_KEY']
+
 
