@@ -16,7 +16,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Zip backend source (ZIP ROOT = APP ROOT)
+      - name: Zip backend source
         run: |
           cd backend
           zip -r ../backend.zip .
@@ -37,12 +37,34 @@ jobs:
         with:
           name: backend-zip
 
-      # ❌ NO UNZIP STEP
+      - name: Unzip artifact
+        run: |
+          unzip backend.zip -d backend
 
-      - name: Deploy ZIP to Azure Web App
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.14'
+
+      - name: Install dependencies
+        working-directory: backend
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Collect static files
+        working-directory: backend
+        env:
+          DJANGO_SETTINGS_MODULE: djangoProject.settings
+        run: |
+          python manage.py collectstatic --noinput
+
+      - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v3
         with:
           app-name: risklensbackend
           slot-name: Production
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_FB65039BFD8B4486AFBE39FD2174760C }}
-          package: backend.zip   # ✅ THIS IS THE KEY
+          package: backend
+
+well python 3.14 exists
