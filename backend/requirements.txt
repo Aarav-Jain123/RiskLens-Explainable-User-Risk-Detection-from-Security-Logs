@@ -1,6 +1,6 @@
 asgiref==3.11.0
 crispy-bootstrap5==2025.6
-Django==6.0
+django==6.0
 django-autoslug==1.9.9
 django-cors-headers==4.9.0
 django-crispy-forms==2.5
