@@ -42,7 +42,7 @@ export function UploadPage({ onUploadComplete }: UploadPageProps) {
       const formData = new FormData();
       formData.append('csv_file', file);
 
-      const response = await fetch('http://127.0.0.1:8000/model_page/', {
+      const response = await fetch(apiURL, {
         method: 'POST',
         body: formData,
       });
