@@ -1,4 +1,4 @@
-name: Build and deploy Python3 app to Azure Web App - risklensbackend
+name: Build and deploy Python app to Azure Web App - risklensbackend
 
 on:
   push:
@@ -25,27 +25,3 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: backend-zip
-          path: backend.zip
-
-  deploy:
-    runs-on: ubuntu-latest
-    needs: build
-
-    steps:
-      - name: Download artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: backend-zip
-
-      - name: Unzip artifact
-        run: |
-          unzip backend.zip -d backend
-
-      - name: Deploy to Azure Web App
-        uses: azure/webapps-deploy@v3
-        with:
-          app-name: risklensbackend
-          slot-name: Production
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_FB65039BFD8B4486AFBE39FD2174760C }}
-          package: backend
-
