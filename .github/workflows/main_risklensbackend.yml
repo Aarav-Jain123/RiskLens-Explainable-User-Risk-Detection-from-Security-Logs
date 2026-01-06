@@ -20,7 +20,7 @@ jobs:
       - name: Set up Python version
         uses: actions/setup-python@v1
         with:
-          python-version: '3.8'
+          python-version: '3.14'
 
       - name: Create and start virtual environment
         run: |
@@ -78,3 +78,4 @@ jobs:
           app-name: 'risklens-backend'
           slot-name: 'Production'
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_C8F03205651241E98C45ABA20D7578BE }}
+
