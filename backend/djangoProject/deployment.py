@@ -7,7 +7,7 @@ ALLOWED_HOSTS = [os.environ['WEBSITE_HOSTNAME'], 'localhost']
 CSRF_TRUSTED_ORIGINS = [f'https://{os.environ["WEBSITE_HOSTNAME"]}']
 
 CORS_ALLOWED_ORIGINS = [
-    "https://calm-field-0579dd400.6.azurestaticapps.net/",
+    "https://calm-field-0579dd400.6.azurestaticapps.net",
 ]
 DEBUG = False
 
@@ -57,6 +57,7 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 
 SECRET_KEY = os.environ['MY_SECRET_KEY']
+
 
 
 
