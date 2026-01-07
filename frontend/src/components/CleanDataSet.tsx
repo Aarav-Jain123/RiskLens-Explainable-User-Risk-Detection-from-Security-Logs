@@ -8,7 +8,7 @@ import { UserCarousel } from './components/UserCarousel';
 import { UploadPage } from './components/UploadPage';
 import { DashboardData } from './types/dashboard';
 
-export default function App() {
+export default function CleanDataSet() {
   const handleFileChange = async (
 
   setError(null);
