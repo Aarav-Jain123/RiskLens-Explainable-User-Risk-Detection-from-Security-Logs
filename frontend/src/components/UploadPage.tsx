@@ -15,8 +15,6 @@ export function UploadPage({ onUploadComplete }: UploadPageProps) {
   const [loadingCleanDataset, setLoadingCleanDataset] = useState(false);
   const [loadingUnusualDataset, setLoadingUnusualDataset] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
-
-  // Carousel images - add your image URLs here
   const carouselImages = [
     'https://raw.githubusercontent.com/Aarav-Jain123/RiskLens/refs/heads/main/Screenshot%202026-01-07%20004515.png',
     'https://raw.githubusercontent.com/Aarav-Jain123/RiskLens/refs/heads/main/Screenshot%202026-01-07%20004525.png',
@@ -70,9 +68,6 @@ export function UploadPage({ onUploadComplete }: UploadPageProps) {
       // Create FormData to send file
       const formData = new FormData();
       formData.append('file', file);
-
-      // Send POST request to backend
-      // Replace 'YOUR_BACKEND_URL' with your actual backend endpoint
       const response = await fetch('https://risklensbackend-g8apbyf5dgceefbx.centralindia-01.azurewebsites.net/model_page/', {
         method: 'POST',
         body: formData,
