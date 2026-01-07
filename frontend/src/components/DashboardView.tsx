@@ -165,6 +165,22 @@
             <p className="text-3xl font-semibold text-purple-600">{locationData.length}</p>
             <p className="text-xs text-gray-500 mt-2">Access locations</p>
           </Card>
+
+          
+        <Card className="p-6">
+          <p className="text-sm text-gray-600 mb-1">Reason For Threat</p>
+              {/* {userData?.threat_events > 20 && (
+                      <span className="px-2 py-1 bg-red-100 text-red-700 rounded text-xs">
+                        <b>High Risk</b> — 
+                      </span>
+                    )} */}
+          <p className="text-3s font-hairline text-orange-600">{alertReason}</p>
+          {userData?.threat_events > 20 && (
+                      <span className="px-0 py-0 rounded text-xs">
+                        <b>Risk Rationale:</b> Such interactions in high amounts often precede credential misuse, followed by authentication failures, resulting in possible credential compromise.
+                      </span>
+                    )}
+        </Card>
         </div>
       </div>
     );
