@@ -2,61 +2,49 @@ import { useState, useRef, useEffect } from 'react';
 import { Navbar } from './Navbar';
 import { HeroPanel } from './HeroPanel';
 import { SummaryCards } from './SummaryCards';
-import { EntriesTable } from './EntriesTable';
 import { DashboardView } from './DashboardView';
 import { UserCarousel } from './UserCarousel';
-import { DashboardData } from '../types/dashboard';
+import { EntriesTable } from './EntriesTable.tsx'
 
 export default function CleanDataSet() {
   const [currentView, setCurrentView] = useState<'overview' | 'user'>('overview');
-  const [dashboardData, setDashboardData] = useState<DashboardData | null>(null);
+  const [dashboardData, setDashboardData] = useState<any>(null);
   const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
-  const [uploading, setUploading] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const inputRef = useRef<HTMLInputElement | null>(null);
 
-  /* ----------------------------- API FETCH ----------------------------- */
-
   const fetchCleanData = async () => {
-    setUploading(true);
+    setLoading(true);
     setError(null);
 
     try {
       const response = await fetch(
-        'https://risklensbackend-g8apbyf5dgceefbx.centralindia-01.azurewebsites.net/clean_dataset_page/',
-        { method: 'GET' }
+        'https://risklensbackend-g8apbyf5dgceefbx.centralindia-01.azurewebsites.net/clean_dataset_page/'
       );
 
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status}`);
-      }
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
 
-      const contentType = response.headers.get('content-type');
-      if (!contentType?.includes('application/json')) {
-        throw new Error('Invalid JSON response');
-      }
+      const raw = await response.json();
 
-      const rawData = await response.json();
-
-      /* ---------- NORMALIZE / MAP BACKEND DATA HERE ---------- */
-      const mappedData: DashboardData = {
-        summary: rawData.summary ?? {},
-        users: rawData.users ?? [],
-        entries: rawData.entries ?? [],
-        metadata: rawData.metadata ?? {},
-      };
-
-      setDashboardData(mappedData);
-    } catch (err) {
-      console.error(err);
-      setError(err instanceof Error ? err.message : 'Failed to fetch data');
+      // ✅ THE ONLY IMPORTANT PART — JSON MAPPING
+      setDashboardData({
+        model_performance: raw.model_performance,
+        threat_analytics: raw.threat_analytics,
+        user_activity_monitor: raw.user_activity_monitor,
+      });
+    } catch (e) {
+      console.error(e);
+      setError('Failed to load dashboard data');
     } finally {
-      setUploading(false);
+      setLoading(false);
     }
   };
 
-  /* --------------------------- HANDLERS --------------------------- */
+  useEffect(() => {
+    fetchCleanData();
+  }, []);
 
   const handleSelectUser = (userId: string) => {
     setSelectedUserId(userId);
@@ -72,13 +60,6 @@ export default function CleanDataSet() {
     inputRef.current?.click();
   };
 
-  /* ------------------------ AUTO FETCH ON LOAD ------------------------ */
-  useEffect(() => {
-    fetchCleanData();
-  }, []);
-
-  /* ----------------------------- RENDER ----------------------------- */
-
   return (
     <div className="min-h-screen bg-gray-50">
       <Navbar
@@ -88,35 +69,36 @@ export default function CleanDataSet() {
       />
 
       <main className="max-w-7xl mx-auto px-6 py-8 space-y-8">
-        {currentView === 'overview' ? (
-          <>
-            <HeroPanel data={dashboardData} />
-            <SummaryCards data={dashboardData} />
+        {loading && <p>Loading…</p>}
+        {error && <p className="text-red-500">{error}</p>}
 
-            <UserCarousel
+        {!loading && !error && dashboardData && (
+          currentView === 'overview' ? (
+            <>
+              {/* ✅ MODEL PERFORMANCE */}
+              <HeroPanel data={dashboardData?.model_performance} />
+
+              {/* ✅ THREAT ANALYTICS */}
+              <SummaryCards data={dashboardData?.threat_analytics} />
+
+              {/* ✅ USER ACTIVITY */}
+              <UserCarousel
+                data={dashboardData?.user_activity_monitor}
+                onSelectUser={handleSelectUser}
+              />
+            </>
+          ) : (
+            <DashboardView
+              userId={selectedUserId}
               data={dashboardData}
-              onSelectUser={handleSelectUser}
+              onBack={handleBackToOverview}
             />
-
-            <button
-              onClick={fetchCleanData}
-              disabled={uploading}
-              className="px-4 py-2 bg-black text-white rounded"
-            >
-              {uploading ? 'Loading…' : 'Refresh Clean Dataset'}
-            </button>
-
-            {error && <p className="text-red-500">{error}</p>}
-
-            <input ref={inputRef} type="file" hidden />
-          </>
-        ) : (
-          <DashboardView
-            userId={selectedUserId}
-            data={dashboardData}
-            onBack={handleBackToOverview}
-          />
+          )
         )}
+
+        <input ref={inputRef} type="file" hidden />
+
+        <EntriesTable />
       </main>
     </div>
   );
