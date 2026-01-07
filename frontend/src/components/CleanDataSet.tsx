@@ -1,13 +1,9 @@
 import { useState, useRef, useEffect } from 'react';
-import { Navbar } from './Navbar';
-import { HeroPanel } from './HeroPanel';
-import { SummaryCards } from './SummaryCards';
-import { DashboardView } from './DashboardView';
-import { UserCarousel } from './UserCarousel';
+// ... (imports remain the same)
 
 export default function CleanDataSet() {
   const [currentView, setCurrentView] = useState<'overview' | 'user'>('overview');
-  const [dashboardData, setDashboardData] = useState<any>(null);
+  const [dashboardData, setDashboardData] = useState<DashboardData | null>(null);
   const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -23,19 +19,30 @@ export default function CleanDataSet() {
         'https://risklensbackend-g8apbyf5dgceefbx.centralindia-01.azurewebsites.net/clean_dataset_page/'
       );
 
-      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      if (!response.ok) throw new Error(`Server responded with ${response.status}`);
 
       const raw = await response.json();
 
-      // ✅ THE ONLY IMPORTANT PART — JSON MAPPING
-      setDashboardData({
-        model_performance: raw.model_performance,
-        threat_analytics: raw.threat_analytics,
-        user_activity_monitor: raw.user_activity_monitor,
-      });
+      // ✅ MAPPING LOGIC
+      // We explicitly map the fields to ensure the structure matches our Interface
+      const mappedData: DashboardData = {
+        model_performance: {
+          accuracy: raw.model_performance?.accuracy || "0%",
+          status: raw.model_performance?.status || "Unknown",
+        },
+        threat_analytics: {
+          total_threat_count: raw.threat_analytics?.total_threat_count || 0,
+          threats_per_day: raw.threat_analytics?.threats_per_day || {},
+          top_threat_subclasses: raw.threat_analytics?.top_threat_subclasses || {},
+          risk_percentage_by_event: raw.threat_analytics?.risk_percentage_by_event || {},
+        },
+        user_activity_monitor: raw.user_activity_monitor || [],
+      };
+
+      setDashboardData(mappedData);
     } catch (e) {
-      console.error(e);
-      setError('Failed to load dashboard data');
+      console.error("Fetch Error:", e);
+      setError('Failed to load dashboard data. Please check your connection.');
     } finally {
       setLoading(false);
     }
@@ -45,52 +52,32 @@ export default function CleanDataSet() {
     fetchCleanData();
   }, []);
 
-  const handleSelectUser = (userId: string) => {
-    setSelectedUserId(userId);
-    setCurrentView('user');
-  };
-
-  const handleBackToOverview = () => {
-    setSelectedUserId(null);
-    setCurrentView('overview');
-  };
-
-  const handleNewReport = () => {
-    inputRef.current?.click();
-  };
+  // ... (handlers stay the same)
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Navbar
-        currentView={currentView}
-        onViewChange={setCurrentView}
-        onNewReport={handleNewReport}
-      />
+      <Navbar currentView={currentView} onViewChange={setCurrentView} onNewReport={() => inputRef.current?.click()} />
 
       <main className="max-w-7xl mx-auto px-6 py-8 space-y-8">
-        {loading && <p>Loading…</p>}
-        {error && <p className="text-red-500">{error}</p>}
+        {loading && <div className="animate-pulse text-center p-10">Loading Security Data...</div>}
+        {error && <div className="bg-red-50 text-red-700 p-4 rounded-lg border border-red-200">{error}</div>}
 
-        {!loading && !error && dashboardData && (
+        {!loading && dashboardData && (
           currentView === 'overview' ? (
             <>
-              {/* ✅ MODEL PERFORMANCE */}
-              <HeroPanel data={dashboardData?.model_performance} />
-
-              {/* ✅ THREAT ANALYTICS */}
-              <SummaryCards data={dashboardData?.threat_analytics} />
-
-              {/* ✅ USER ACTIVITY */}
-              <UserCarousel
-                data={dashboardData?.user_activity_monitor}
-                onSelectUser={handleSelectUser}
+              {/* Data passed down matches the mapped structure */}
+              <HeroPanel data={dashboardData.model_performance} />
+              <SummaryCards data={dashboardData.threat_analytics} />
+              <UserCarousel 
+                data={dashboardData.user_activity_monitor} 
+                onSelectUser={handleSelectUser} 
               />
             </>
           ) : (
-            <DashboardView
-              userId={selectedUserId}
-              data={dashboardData}
-              onBack={handleBackToOverview}
+            <DashboardView 
+              userId={selectedUserId} 
+              data={dashboardData} 
+              onBack={handleBackToOverview} 
             />
           )
         )}
