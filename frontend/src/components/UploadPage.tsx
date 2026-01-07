@@ -67,7 +67,7 @@ export function UploadPage({ onUploadComplete }: UploadPageProps) {
     try {
       // Create FormData to send file
       const formData = new FormData();
-      formData.append('file', file);
+      formData.append('csv_file', file);
       const response = await fetch('https://risklensbackend-g8apbyf5dgceefbx.centralindia-01.azurewebsites.net/model_page/', {
         method: 'POST',
         body: formData,
