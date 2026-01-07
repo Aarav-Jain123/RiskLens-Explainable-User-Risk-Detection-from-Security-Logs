@@ -113,7 +113,7 @@ export function UploadPage({ onUploadComplete }: UploadPageProps) {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
       {/* Hero Section */}
-      <div className="max-w-6xl mx-auto px-6 py-16">
+      <div className="max-w-7xl mx-auto px-8 py-20">
         <div className="text-center mb-12">
           <div className="inline-flex items-center justify-center w-24 h-24 bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-700 rounded-3xl mb-8 shadow-xl transform hover:scale-105 transition-transform duration-300">
             <Shield className="h-12 w-12 text-white" />
