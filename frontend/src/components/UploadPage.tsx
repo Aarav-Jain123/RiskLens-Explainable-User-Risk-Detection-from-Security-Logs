@@ -16,9 +16,9 @@ export function UploadPage({ onUploadComplete }: UploadPageProps) {
 
   // Carousel images - add your image URLs here
   const carouselImages = [
-    'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&h=500&fit=crop',
-    'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&h=500&fit=crop',
-    'https://images.unsplash.com/photo-1504868584819-f8e8b4b6d7e3?w=800&h=500&fit=crop',
+    'https://raw.githubusercontent.com/Aarav-Jain123/RiskLens/refs/heads/main/Screenshot%202026-01-07%20004515.png',
+    'https://raw.githubusercontent.com/Aarav-Jain123/RiskLens/refs/heads/main/Screenshot%202026-01-07%20004525.png',
+    'https://raw.githubusercontent.com/Aarav-Jain123/RiskLens/refs/heads/main/Screenshot%202026-01-07%20004550.png',
   ];
 
   // Auto-play carousel
