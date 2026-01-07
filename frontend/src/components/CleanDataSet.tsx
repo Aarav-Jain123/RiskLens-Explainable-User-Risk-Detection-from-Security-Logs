@@ -1,5 +1,11 @@
 import { useState, useRef, useEffect } from 'react';
-// ... (imports remain the same)
+import { Navbar } from './Navbar';
+import { HeroPanel } from './HeroPanel';
+import { SummaryCards } from './SummaryCards';
+import { EntriesTable } from './EntriesTable';
+import { DashboardView } from './DashboardView';
+import { UserCarousel } from './UserCarousel';
+import { DashboardData } from '../types/dashboard';
 
 export default function CleanDataSet() {
   const [currentView, setCurrentView] = useState<'overview' | 'user'>('overview');
