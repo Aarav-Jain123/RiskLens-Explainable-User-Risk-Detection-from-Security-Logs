@@ -1,12 +1,12 @@
 import { useState, useEffect } from 'react';
-import { Navbar } from './components/Navbar';
-import { HeroPanel } from './components/HeroPanel';
-import { SummaryCards } from './components/SummaryCards';
-import { EntriesTable } from './components/EntriesTable';
-import { DashboardView } from './components/DashboardView';
-import { UserCarousel } from './components/UserCarousel';
-import { UploadPage } from './components/UploadPage';
-import { DashboardData } from './types/dashboard';
+import { Navbar } from './Navbar';
+import { HeroPanel } from './HeroPanel';
+import { SummaryCards } from './SummaryCards';
+import { EntriesTable } from './EntriesTable';
+import { DashboardView } from './DashboardView';
+import { UserCarousel } from './UserCarousel';
+import { UploadPage } from './UploadPage';
+import { DashboardData } from '../types/dashboard';
 
 export default function App() {
   const [isFileUploaded, setIsFileUploaded] = useState(false);
