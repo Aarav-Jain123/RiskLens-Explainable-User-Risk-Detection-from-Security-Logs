@@ -1,61 +1,82 @@
-import { useState, useRef, useEffect } from 'react';
-import { Navbar } from './Navbar';
-import { HeroPanel } from './HeroPanel';
-import { SummaryCards } from './SummaryCards';
-import { EntriesTable } from './EntriesTable';
-import { DashboardView } from './DashboardView';
-import { UserCarousel } from './UserCarousel';
+import { useState, useEffect } from 'react';
+import { Navbar } from './components/Navbar';
+import { HeroPanel } from './components/HeroPanel';
+import { SummaryCards } from './components/SummaryCards';
+import { EntriesTable } from './components/EntriesTable';
+import { DashboardView } from './components/DashboardView';
+import { UserCarousel } from './components/UserCarousel';
+import { UploadPage } from './components/UploadPage';
+import { DashboardData } from './types/dashboard';
 
-export default function UnusualDataSet() {
-  const [currentView, setCurrentView] = useState('overview');
-  const [dashboardData, setDashboardData] = useState(null);
-  const [selectedUserId, setSelectedUserId] = useState(null);
-  const [uploading, setUploading] = useState(false);
-  const [error, setError] = useState(null);
-  const inputRef = useRef(null);
+export default function App() {
+  const [isFileUploaded, setIsFileUploaded] = useState(false);
+  const [dashboardData, setDashboardData] = useState<DashboardData | null>(null);
+  const [currentView, setCurrentView] = useState<'overview' | 'dashboard'>('overview');
+  const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
 
-  const fetchCleanData = async () => {
-    setError(null);
-    setUploading(true);
-
+  const fetchDashboardData = async () => {
+    setLoading(true);
     try {
-      const response = await fetch(`https://risklensbackend-g8apbyf5dgceefbx.centralindia-01.azurewebsites.net/dirty_dataset_page/`, {
-        method: 'GET',
-      });
-
-      if (!response.ok) {
-        throw new Error(`Fetch failed (${response.status})`);
-      }
-
-      const data = await response.json();
+      const response = await fetch(
+        'https://risklensbackend-g8apbyf5dgceefbx.centralindia-01.azurewebsites.net/clean_dataset_page/'
+      );
       
-      // Values mapped to the state object
-      setDashboardData({
-        model_performance: data.model_performance,
-        threat_analytics: data.threat_analytics,
-        user_activity_monitor: data.user_activity_monitor,
-      });
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to fetch data');
+      if (!response.ok) throw new Error('Network response was not ok');
+      
+      const rawData = await response.json();
+
+      // Mapping values to match your component expectations
+      const mappedData: DashboardData = {
+        model_performance: rawData.model_performance,
+        threat_analytics: rawData.threat_analytics,
+        user_activity_monitor: rawData.user_activity_monitor,
+      };
+
+      setDashboardData(mappedData);
+      setIsFileUploaded(true);
+    } catch (error) {
+      console.error("Failed to fetch dashboard data:", error);
     } finally {
-      setUploading(false);
+      setLoading(false);
     }
   };
 
-  // Auto-fetch on load
+  // Trigger the GET request on mount
   useEffect(() => {
-    fetchCleanData();
+    fetchDashboardData();
   }, []);
 
-  const handleNewReport = () => { inputRef.current?.click(); };
-  const handleSelectUser = (userId) => {
-    setSelectedUserId(userId);
-    setCurrentView('user');
+  const handleUploadComplete = (data: DashboardData) => {
+    setDashboardData(data);
+    setIsFileUploaded(true);
   };
-  const handleBackToOverview = () => {
-    setSelectedUserId(null);
+
+  const handleNewReport = () => {
+    setIsFileUploaded(false);
+    setDashboardData(null);
     setCurrentView('overview');
+    setSelectedUserId(null);
+    fetchDashboardData(); // Re-fetch on reset if desired
   };
+
+  const handleSelectUser = (userId: string) => {
+    setSelectedUserId(userId);
+    setCurrentView('dashboard');
+  };
+
+  const handleBackToOverview = () => {
+    setCurrentView('overview');
+    setSelectedUserId(null);
+  };
+
+  if (loading) {
+    return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
+  }
+
+  if (!isFileUploaded) {
+    return <UploadPage onUploadComplete={handleUploadComplete} />;
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -64,22 +85,10 @@ export default function UnusualDataSet() {
       <main className="max-w-7xl mx-auto px-6 py-8 space-y-8">
         {currentView === 'overview' ? (
           <>
-            {/* Value Mapping to Props */}
             <HeroPanel data={dashboardData?.model_performance} />
             <SummaryCards data={dashboardData?.threat_analytics} />
-            <UserCarousel 
-              data={dashboardData?.user_activity_monitor} 
-              onSelectUser={handleSelectUser} 
-            />
-            
+            <UserCarousel data={dashboardData?.user_activity_monitor} onSelectUser={handleSelectUser} />
             <EntriesTable />
-            
-            <button onClick={fetchCleanData} disabled={uploading}>
-              {uploading ? 'Loading...' : 'Fetch Clean Dataset'}
-            </button>
-            
-            {error && <p className="text-red-500">{error}</p>}
-            <input ref={inputRef} type="file" style={{ display: 'none' }} />
           </>
         ) : (
           <DashboardView 
