@@ -31,7 +31,7 @@ export default function UnusualDataSet() {
     }
 
     try {
-      const response = await fetch(`${baseURL}/clean_dataset_page/`, {
+      const response = await fetch(`https://risklensbackend-g8apbyf5dgceefbx.centralindia-01.azurewebsites.net/dirty_dataset_page/`, {
         method: 'GET',
       });
 
