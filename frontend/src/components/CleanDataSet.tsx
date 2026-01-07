@@ -4,7 +4,6 @@ import { HeroPanel } from './HeroPanel';
 import { SummaryCards } from './SummaryCards';
 import { DashboardView } from './DashboardView';
 import { UserCarousel } from './UserCarousel';
-import { EntriesTable } from './EntriesTable.tsx'
 
 export default function CleanDataSet() {
   const [currentView, setCurrentView] = useState<'overview' | 'user'>('overview');
@@ -97,8 +96,6 @@ export default function CleanDataSet() {
         )}
 
         <input ref={inputRef} type="file" hidden />
-
-        <EntriesTable />
       </main>
     </div>
   );
