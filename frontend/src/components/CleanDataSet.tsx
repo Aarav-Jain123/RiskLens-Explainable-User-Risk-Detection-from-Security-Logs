@@ -15,35 +15,34 @@ export default function App() {
   const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
-  const fetchDashboardData = async () => {
-    setLoading(true);
-    try {
-      const response = await fetch(
-        'https://risklensbackend-g8apbyf5dgceefbx.centralindia-01.azurewebsites.net/clean_dataset_page/'
-      );
-      
-      if (!response.ok) throw new Error('Network response was not ok');
-      
-      const rawData = await response.json();
-
-      // Mapping values to match your component expectations
-      const mappedData: DashboardData = {
-        model_performance: rawData.model_performance,
-        threat_analytics: rawData.threat_analytics,
-        user_activity_monitor: rawData.user_activity_monitor,
-      };
-
-      setDashboardData(mappedData);
-      setIsFileUploaded(true);
-    } catch (error) {
-      console.error("Failed to fetch dashboard data:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Trigger the GET request on mount
+  // 🔹 GET request + mapping
   useEffect(() => {
+    const fetchDashboardData = async () => {
+      setLoading(true);
+      try {
+        const res = await fetch(
+          'https://risklensbackend-g8apbyf5dgceefbx.centralindia-01.azurewebsites.net/clean_dataset_page/'
+        );
+
+        if (!res.ok) throw new Error('Failed to fetch');
+
+        const raw = await res.json();
+
+        const mappedData: DashboardData = {
+          model_performance: raw.model_performance,
+          threat_analytics: raw.threat_analytics,
+          user_activity_monitor: raw.user_activity_monitor,
+        };
+
+        setDashboardData(mappedData);
+        setIsFileUploaded(true);
+      } catch (err) {
+        console.error('Dashboard fetch failed:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
     fetchDashboardData();
   }, []);
 
@@ -57,7 +56,6 @@ export default function App() {
     setDashboardData(null);
     setCurrentView('overview');
     setSelectedUserId(null);
-    fetchDashboardData(); // Re-fetch on reset if desired
   };
 
   const handleSelectUser = (userId: string) => {
@@ -71,31 +69,40 @@ export default function App() {
   };
 
   if (loading) {
-    return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
+    return <div>Loading...</div>;
   }
 
-  if (!isFileUploaded) {
+  if (!isFileUploaded || !dashboardData) {
     return <UploadPage onUploadComplete={handleUploadComplete} />;
   }
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Navbar currentView={currentView} onViewChange={setCurrentView} onNewReport={handleNewReport} />
-      
+      <Navbar
+        currentView={currentView}
+        onViewChange={setCurrentView}
+        onNewReport={handleNewReport}
+      />
+
       <main className="max-w-7xl mx-auto px-6 py-8 space-y-8">
         {currentView === 'overview' ? (
           <>
-            <HeroPanel data={dashboardData?.model_performance} />
-            <SummaryCards data={dashboardData?.threat_analytics} />
-            <UserCarousel data={dashboardData?.user_activity_monitor} onSelectUser={handleSelectUser} />
+            <HeroPanel data={dashboardData.model_performance} />
+            <SummaryCards data={dashboardData.threat_analytics} />
+            <UserCarousel
+              data={dashboardData.user_activity_monitor}
+              onSelectUser={handleSelectUser}
+            />
             <EntriesTable />
           </>
         ) : (
-          <DashboardView 
-            userId={selectedUserId} 
-            data={dashboardData} 
-            onBack={handleBackToOverview} 
-          />
+          selectedUserId && (
+            <DashboardView
+              userId={selectedUserId}
+              data={dashboardData}
+              onBack={handleBackToOverview}
+            />
+          )
         )}
       </main>
     </div>
