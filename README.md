@@ -1,6 +1,6 @@
-RiskLens is a project around risk analysis/visualisation (likely aligned with your interest in tech + decision systems). Here is a tight, high-yield revision:
+RiskLens is a project around risk analysis/visualisation.
 
-RiskLens is fundamentally a risk assessment + decision-support system. Its core objective is to take uncertain, potentially harmful situations and convert them into structured, interpretable signals that guide action.
+RiskLens is fundamentally a risk assessment + decision-support system. Its core objective is to convert uncertain, potentially harmful situations into structured, interpretable signals that guide action.
 
 At the conceptual level, it rests on three pillars. First, risk identification—you define what counts as “risk” in your domain (financial loss, safety hazard, misinformation, system failure, etc.). Second, risk quantification—you assign measurable parameters such as probability, impact severity, and sometimes exposure duration. Third, risk prioritisation—you rank risks so attention and resources go where they matter most.
 
