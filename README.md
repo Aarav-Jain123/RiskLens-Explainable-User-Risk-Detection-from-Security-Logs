@@ -8,7 +8,7 @@ Mathematically or logically, most implementations reduce to a model like:
 Risk ≈ Probability × Impact
 Optionally extended with weights, confidence scores, or time sensitivity.
 
-From a system design perspective, RiskLens likely has:
+From a system design perspective, RiskLens has:
 
 Input layer: raw data (user input, datasets, APIs)
 Processing layer: rules, scoring models, or heuristics
@@ -29,7 +29,7 @@ scenario simulation (“what if X changes?”)
 personalised thresholds (different users tolerate different risk levels)
 explainability (why a risk score is high)
 
-The intellectual weak point in most such projects—and you should check this—is subjectivity in scoring. If your probability/impact inputs are arbitrary, the entire system becomes cosmetically analytical but not genuinely rigorous.
+The intellectual weak point in most such projects—and you should check this—is subjectivity in scoring. If your probability/impact inputs are arbitrary, the entire system becomes merely cosmetic and not genuinely rigorous.
 
 So the sharp questions you should be able to answer:
 
